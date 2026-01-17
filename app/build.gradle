@@ -41,13 +41,13 @@ android {
             //设置支持的SO库架构
             abiFilters "armeabi-v7a"
         }
-    }
-    
-    // CMake配置
-    externalNativeBuild {
-        cmake {
-            path "src/main/cpp/CMakeLists.txt"
-            version "3.10.2"
+        
+        // CMake配置
+        externalNativeBuild {
+            cmake {
+                path "src/main/cpp/CMakeLists.txt"
+                version "3.10.2"
+            }
         }
     }
 
