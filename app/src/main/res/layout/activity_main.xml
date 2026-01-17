@@ -1,0 +1,276 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity" >
+
+    <FrameLayout
+        android:id="@+id/fl_main"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <RelativeLayout
+            android:id="@+id/rl_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            <!--标题-->
+            <LinearLayout
+                android:id="@+id/mains"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/sm_90">
+                <!--应用logo-->
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="@dimen/sm_152"
+                    android:layout_height="@dimen/sm_45"
+                    android:src="@drawable/sm_logo" />
+                <!--网络状态-->
+                <ImageView
+                    android:layout_marginLeft="@dimen/sm_20"
+                    android:id="@+id/iv_net_state"
+                    android:layout_width="@dimen/sm_35"
+                    android:layout_height="@dimen/sm_35"
+                    android:layout_marginRight="@dimen/sm_30"
+                    android:src="@drawable/wifi" />
+                <!--公告-->
+                <LinearLayout
+                    android:layout_width="@dimen/sm_640"
+                    android:layout_height="@dimen/sm_46"
+                    android:layout_marginTop="@dimen/sm_5">
+                    <LinearLayout
+                        android:id="@+id/gonggao_root"
+                        android:layout_width="@dimen/sm_640"
+                        android:layout_height="@dimen/sm_46"
+                        android:background="@drawable/gonggao_root_bg">
+                        <ImageView
+                            android:layout_width="@dimen/sm_38"
+                            android:layout_height="@dimen/sm_38"
+                            android:layout_marginLeft="@dimen/sm_5"
+                            android:layout_marginTop="@dimen/sm_4"
+                            android:layout_marginRight="@dimen/sm_10"
+                            android:src="@drawable/gonggao" />
+                        <com.shenma.tvlauncher.view.AlwaysMarqueeTextView
+                            android:textSize="@dimen/sm_28"
+                            android:textColor="@color/white"
+                            android:ellipsize="marquee"
+                            android:id="@+id/gonggao"
+                            android:layout_marginTop="@dimen/sm_4"
+                            android:layout_width="@dimen/sm_580"
+                            android:layout_height="@dimen/sm_38"
+                            android:layout_marginRight="@dimen/sm_30"
+                            android:text=""
+                            android:singleLine="true"
+                            android:marqueeRepeatLimit="marquee_forever" />
+                    </LinearLayout>
+                </LinearLayout>
+                <!--时间-->
+                <LinearLayout
+                    android:id="@+id/main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/sm_76"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/sm_30"
+                    android:orientation="horizontal" >
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical" >
+                        <TextView
+                            android:id="@+id/tv_main_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="@string/def_time"
+                            android:textColor="@color/configuration_turn_off"
+                            android:textSize="@dimen/sm_45"/>
+                        <TextView
+                            android:id="@+id/time_colon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/time_colon"
+                            android:textColor="@color/configuration_turn_off"
+                            android:textSize="@dimen/sm_45"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_main_line"
+                        android:layout_width="@dimen/sm_25"
+                        android:layout_height="@dimen/sm_50"
+                        android:gravity="center"
+                        android:src="@drawable/home_line" />
+                    <TextView
+                        android:id="@+id/tv_main_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/configuration_turn_off"
+                        android:text="@string/def_date"
+                        android:textSize="@dimen/sm_18" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <!--推荐区域可下拉-->
+            <ScrollView
+                android:layout_below="@+id/mains"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!--推荐选择-->
+                    <LinearLayout
+                        android:id="@+id/ll_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sm_50"
+                        android:layout_below="@id/mains"
+                        android:layout_marginTop="@dimen/sm_20"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/sm_185" >
+
+                        <RadioGroup
+                            android:id="@+id/title_group"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal" >
+                            <!--热门推荐-->
+                            <RadioButton
+                                android:gravity="center"
+                                android:id="@id/rb_recommend"
+                                android:focusable="true"
+                                android:nextFocusLeft="@id/rb_settings"
+                                android:nextFocusRight="@id/rb_settings"
+                                android:nextFocusDown="@id/iv_re_0"
+                                android:layout_width="0px"
+                                android:layout_height="wrap_content"
+                                android:button="@null"
+                                android:text="@string/recommend"
+                                android:layout_weight="0.5"
+                                style="@style/TitleButton" />
+
+                            <!--设置-->
+                            <RadioButton
+                                android:gravity="center"
+                                android:id="@id/rb_settings"
+                                android:focusable="true"
+                                android:nextFocusLeft="@id/rb_recommend"
+                                android:nextFocusRight="@id/rb_recommend"
+                                android:layout_width="0px"
+                                android:layout_height="wrap_content"
+                                android:button="@null"
+                                android:text="@string/settings"
+                                android:layout_weight="0.5"
+                                style="@style/TitleButton" />
+                        </RadioGroup>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/title_group">
+
+                            <ImageView
+                                android:id="@id/iv_titile"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/sm_2"
+                                android:src="@drawable/titile_top"
+                                android:layout_weight="1.0" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.0" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!--嵌套-->
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/pager"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/sm_470"
+                        android:layout_above="@+id/rg_video_type_bottoms"
+                        android:layout_below="@id/ll_rb"
+                        android:layout_marginTop="@dimen/sm_4" />
+
+                    <!--类目导航-->
+                    <LinearLayout
+                        android:id="@+id/rg_video_type_bottoms"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/sm_60"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="@dimen/sm_15"
+                        android:layout_marginLeft="@dimen/sm_43"
+                        android:layout_marginRight="@dimen/sm_42"
+                        android:layout_marginTop="@dimen/sm_10"
+                        android:background="@drawable/bottom_titile"
+                        android:gravity="center">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center">
+
+                            <HorizontalScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/sm_60"
+                                android:scrollbars="none">
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center">
+                                    <RadioGroup
+                                        android:id="@+id/rg_video_type_bottom"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+                                    </RadioGroup>
+                                </LinearLayout>
+                            </HorizontalScrollView>
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <!--弹窗公告-->
+            <RelativeLayout
+                android:gravity="center"
+                android:id="@+id/notice"
+                android:background="@android:color/transparent"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true">
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </FrameLayout>
+    <!--应用更新-->
+    <TextView
+        android:id="@+id/tv_update_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sm_80"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/detail_point"
+        android:textSize="@dimen/sm_18" />
+</FrameLayout>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/transparent"
+    android:paddingTop="@dimen/sm_5"
+    android:paddingBottom="@dimen/sm_5">
+
+    <!-- 类型筛选 -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sm_20"
+        android:paddingRight="@dimen/sm_20"
+        android:paddingTop="@dimen/sm_2"
+        android:paddingBottom="@dimen/sm_2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="类型："
+            android:textColor="@color/white"
+            android:textSize="@dimen/sm_28"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:layout_marginRight="@dimen/sm_10" />
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:fadeScrollbars="false"
+            android:fillViewport="false"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/filter_type_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <!-- 类型选项将通过代码动态添加 -->
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- 年份筛选 -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sm_20"
+        android:paddingRight="@dimen/sm_20"
+        android:paddingTop="@dimen/sm_2"
+        android:paddingBottom="@dimen/sm_2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="年份："
+            android:textColor="@color/white"
+            android:textSize="@dimen/sm_28"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:layout_marginRight="@dimen/sm_10" />
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:fadeScrollbars="false"
+            android:fillViewport="false"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/filter_year_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <!-- 年份选项将通过代码动态添加 -->
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- 地区筛选 -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sm_20"
+        android:paddingRight="@dimen/sm_20"
+        android:paddingTop="@dimen/sm_2"
+        android:paddingBottom="@dimen/sm_2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地区："
+            android:textColor="@color/white"
+            android:textSize="@dimen/sm_28"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:layout_marginRight="@dimen/sm_10" />
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:fadeScrollbars="false"
+            android:fillViewport="false"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/filter_area_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <!-- 地区选项将通过代码动态添加 -->
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- 排序筛选 -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sm_20"
+        android:paddingRight="@dimen/sm_20"
+        android:paddingTop="@dimen/sm_2"
+        android:paddingBottom="@dimen/sm_2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="排序："
+            android:textColor="@color/white"
+            android:textSize="@dimen/sm_28"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:layout_marginRight="@dimen/sm_10" />
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:fadeScrollbars="false"
+            android:fillViewport="false"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/filter_sort_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <!-- 排序选项将通过代码动态添加 -->
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+</LinearLayout>
+

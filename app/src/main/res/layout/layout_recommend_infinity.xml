@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <!-- 顶部功能栏 -->
+    <LinearLayout
+        android:id="@+id/top_bar_infinity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="26dp"
+        android:paddingEnd="26dp"
+        android:paddingTop="8dp">
+        
+        <!-- 左侧功能按钮 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            
+            <!-- 搜索按钮 -->
+            <LinearLayout
+                android:id="@+id/btn_search_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:background="@drawable/selector_top_button_focus">
+                <ImageView
+                    android:id="@+id/iv_search_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/search"/>
+                <TextView
+                    android:id="@+id/tv_search_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="搜索"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            
+            <!-- 历史记录按钮 -->
+            <LinearLayout
+                android:id="@+id/btn_history_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:layout_marginStart="15dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:background="@drawable/selector_top_button_focus">
+                <ImageView
+                    android:id="@+id/iv_history_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_history_new"/>
+                <TextView
+                    android:id="@+id/tv_history_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="历史"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            
+            <!-- 播放设置按钮 -->
+            <LinearLayout
+                android:id="@+id/btn_play_setting_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:layout_marginStart="15dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:background="@drawable/selector_top_button_focus">
+
+                <ImageView
+                    android:id="@+id/iv_setting_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/setting"
+                    tools:src="@drawable/ic_set" />
+                <TextView
+                    android:id="@+id/tv_setting_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="设置"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            
+            <!-- 个人中心按钮 -->
+            <LinearLayout
+                android:id="@+id/btn_user_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:layout_marginStart="15dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:background="@drawable/selector_top_button_focus">
+                <ImageView
+                    android:id="@+id/iv_user_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_user_new"/>
+                <TextView
+                    android:id="@+id/tv_user_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="我的"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            
+            <!-- 公告跑马灯 -->
+            <LinearLayout
+                android:id="@+id/gonggao_layout_infinity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp">
+                
+                <TextView
+                    android:id="@+id/tv_gonggao_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="公告："
+                    android:singleLine="true"
+                    android:textColor="#FFC107"
+                    android:textSize="12sp"/>
+                
+                <com.shenma.tvlauncher.view.AlwaysMarqueeTextView
+                    android:id="@+id/tv_gonggao_infinity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="marquee"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="16sp"
+                    android:text=""/>
+            </LinearLayout>
+            
+            <!-- 账号 -->
+            <TextView
+                android:id="@+id/tv_account_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="12sp"
+                android:text="账号：未登录"/>
+            
+            <!-- 到期时间 -->
+            <TextView
+                android:id="@+id/tv_vip_expire_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="10dp"
+                android:textColor="#FFC107"
+                android:textSize="12sp"
+                android:text="到期时间：永久"/>
+        </LinearLayout>
+        
+        <!-- 右侧时间和网络状态 -->
+        <LinearLayout
+            android:id="@+id/top_info_infinity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="8dp">
+            
+            <!-- 网络状态 -->
+            <ImageView
+                android:id="@+id/iv_net_state_infinity"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/wifi"
+                android:layout_marginEnd="15dp"/>
+
+            <!-- 时间 -->
+            <TextView
+                android:id="@+id/tv_time_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:00"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 上方影片信息展示区（包含分类标签、标题、简介） -->
+    <RelativeLayout
+        android:id="@+id/info_container_infinity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/progressLayout"
+        android:layout_below="@+id/top_bar_infinity"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <!-- 分类容器 - 顶部（横向滚动） -->
+        <HorizontalScrollView
+            android:id="@+id/category_scroll_infinity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:scrollbars="none"
+            android:fadeScrollbars="false"
+            android:fillViewport="false"
+            android:overScrollMode="never"
+            android:minHeight="0dp">
+            <LinearLayout
+                android:id="@+id/category_container_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:paddingStart="26dp"
+                android:paddingEnd="26dp">
+                <!-- 分类按钮将在代码中动态添加 -->
+            </LinearLayout>
+        </HorizontalScrollView>
+        
+        <!-- Logo - 隐藏 -->
+        <ImageView
+            android:id="@+id/logo_infinity"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"/>
+        
+        <!-- 隐藏的top_nav_infinity保留ID -->
+        <LinearLayout
+            android:id="@+id/top_nav_infinity"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"/>
+
+        <!-- 影片信息容器 -->
+        <LinearLayout
+            android:id="@+id/bottom_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/category_scroll_infinity"
+            android:orientation="vertical"
+            android:paddingTop="8dp">
+
+            <!-- 影片标题 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_title_infinity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="推荐内容" />
+
+                <!-- 评分 -->
+                <TextView
+                    android:id="@+id/tv_rating_infinity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textColor="#FFC107"
+                    android:textSize="14sp"
+                    tools:text="暂无" />
+            </LinearLayout>
+            
+            <!-- 影片类型 | 年代 | 地区 -->
+            <TextView
+                android:id="@+id/tv_info_infinity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="12sp"
+                tools:text="动作 | 2024 | 中国大陆" />
+
+            <!-- 影片简介 -->
+            <TextView
+                android:id="@+id/tv_desc_infinity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="#B3FFFFFF"
+                android:textSize="12sp"
+                tools:text="精彩内容推荐" />
+            
+            <!-- 按钮容器 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_container_infinity"
+                android:layout_marginTop="0dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                
+                <!-- 立即播放按钮 -->
+                <LinearLayout
+                    android:id="@+id/btn_play_now_infinity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:background="@drawable/selector_play_button">
+                    
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_play_arrow_white"/>
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="立即播放"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+                
+                <!-- 收藏按钮 -->
+                <LinearLayout
+                    android:id="@+id/btn_collect_infinity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:background="@drawable/selector_collect_button">
+                    
+                    <ImageView
+                        android:id="@+id/iv_collect_icon_infinity"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_heart_white"/>
+                    
+                    <TextView
+                        android:id="@+id/tv_collect_text_infinity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="收藏"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- 底部横向滚动海报列表 -->
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
+
+        <HorizontalScrollView
+            android:id="@+id/hsv_recommend_infinity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingStart="26dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="26dp"
+            android:paddingBottom="24dp"
+            android:scrollbars="none"
+            android:focusable="false"
+            android:background="@android:color/transparent">
+
+            <!-- 动态推荐位容器 -->
+            <LinearLayout
+                android:id="@+id/ll_recommend_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:background="@android:color/transparent">
+                <!-- 推荐卡片将在代码中动态添加 -->
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- 隐藏的兼容性控件 -->
+    <TextView
+        android:id="@+id/tv_year_infinity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/tv_type_infinity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/btn_play_infinity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

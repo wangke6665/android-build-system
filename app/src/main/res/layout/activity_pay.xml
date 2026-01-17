@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFFFF">
+
+    <!-- 顶部栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sm_50"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#FF1E90FF"
+        android:paddingLeft="@dimen/sm_15"
+        android:paddingRight="@dimen/sm_15">
+
+        <Button
+            android:id="@+id/pay_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/sm_40"
+            android:paddingLeft="@dimen/sm_20"
+            android:paddingRight="@dimen/sm_20"
+            android:text="返回"
+            android:textSize="@dimen/sm_22"
+            android:textColor="#FFFFFFFF"
+            android:background="#44000000"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="扫码支付"
+            android:textColor="#FFFFFFFF"
+            android:textSize="@dimen/sm_28"/>
+
+        <Button
+            android:id="@+id/pay_refresh_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/sm_40"
+            android:paddingLeft="@dimen/sm_20"
+            android:paddingRight="@dimen/sm_20"
+            android:text="刷新"
+            android:textSize="@dimen/sm_22"
+            android:textColor="#FFFFFFFF"
+            android:background="#44000000"/>
+
+    </LinearLayout>
+
+    <!-- WebView -->
+    <WebView
+        android:id="@+id/pay_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

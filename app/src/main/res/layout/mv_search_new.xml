@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/video_details_bg">
+
+    <LinearLayout
+        android:layout_width="@dimen/sm_400"
+        android:layout_height="fill_parent"
+        android:background="@drawable/member_left_background"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/sm_30"
+        android:paddingTop="@dimen/sm_40"
+        android:paddingRight="@dimen/sm_40"
+        android:paddingBottom="@dimen/sm_40">
+
+        <!--搜索框-->
+<!--        <EditText-->
+<!--            android:textSize="@dimen/sm_36"-->
+<!--            android:textColor="#FF000000"-->
+<!--            android:ellipsize="start"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:id="@+id/search_keybord_input"-->
+<!--            android:background="@drawable/so_box"-->
+<!--            android:focusable="auto"-->
+<!--            android:layout_width="@dimen/sm_320"-->
+<!--            android:layout_height="@dimen/sm_50"-->
+<!--            android:layout_marginBottom="@dimen/sm_10"-->
+<!--            android:hint="@string/input_so"-->
+<!--            android:singleLine="true"-->
+<!--            android:imeOptions="actionSearch"/>-->
+<!--        <Button-->
+<!--            style="@style/search_keybord_full"-->
+<!--            android:tag="A"-->
+<!--            android:text="A" />-->
+
+        <!--搜索框-->
+<!--        <EditText-->
+<!--            android:textSize="@dimen/sm_36"-->
+<!--            android:textColor="#FF000000"-->
+<!--            android:ellipsize="start"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:id="@+id/search_keybord_input"-->
+<!--            android:background="@drawable/so_box"-->
+<!--            android:focusable="auto"-->
+<!--            android:layout_width="@dimen/sm_320"-->
+<!--            android:layout_height="@dimen/sm_50"-->
+<!--            android:layout_marginBottom="@dimen/sm_10"-->
+<!--            android:hint="@string/input_so"-->
+<!--            android:singleLine="true"-->
+<!--            android:imeOptions="actionSearch"/>-->
+
+        <!--搜索框-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/search_keybord_full_voice"
+                style="@style/search_keybord_t9"
+                android:layout_toRightOf="@id/search_keybord_input"
+                android:background="@drawable/keypad_voice_selector" />
+            <EditText
+                android:id="@+id/search_keybord_input"
+                android:layout_width="@dimen/sm_265"
+                android:layout_height="@dimen/sm_50"
+                android:layout_centerVertical="true"
+                android:background="@drawable/so_box"
+                android:ellipsize="start"
+                android:gravity="center_vertical"
+                android:hint="@string/input_so"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:textColor="#FF000000"
+                android:textSize="@dimen/sm_36" />
+        </RelativeLayout>
+
+
+        <!--键盘-->
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0.0px"
+            android:layout_weight="1.0">
+            <!--嵌套-->
+            <include
+                android:id="@+id/search_keybord_full_layout"
+                layout="@layout/mv_search_keybord_full"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+        </FrameLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:text="@string/input_text"
+            android:textSize="@dimen/sm_18" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:text="@string/input_text2"
+            android:textSize="@dimen/sm_18"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sm_25"
+            android:layout_marginTop="@dimen/sm_10"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/type_details_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sm_5"
+                android:layout_marginLeft="@dimen/sm_10"
+                android:text="@string/search"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sm_50" />
+            <ImageView
+                android:layout_width="@dimen/sm_10"
+                android:layout_height="@dimen/sm_80"
+                android:layout_marginLeft="@dimen/sm_10"
+                android:src="@drawable/vod_line35" />
+            <!--搜索提示文字-->
+            <TextView
+                android:id="@+id/SearchText"
+                android:textSize="@dimen/sm_25"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:paddingLeft="@dimen/sm_1"
+                android:layout_marginLeft="@dimen/sm_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/sm_5"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/sm_35"
+            android:layout_marginTop="@dimen/sm_5"
+            android:layout_marginRight="@dimen/sm_35"
+            android:layout_marginBottom="@dimen/sm_5"
+            android:scaleType="fitXY"
+            android:src="@drawable/vod_line761" />
+
+        <GridView
+            android:id="@+id/search_result"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="@dimen/sm_30"
+            android:layout_marginRight="@dimen/sm_35"
+            android:focusableInTouchMode="true"
+            android:numColumns="4"
+            android:scrollbars="none"
+            android:verticalSpacing="@dimen/sm_20" />
+
+        <TextView
+            android:id="@+id/search_empty_text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/No_results_yet"
+            android:textColor="#ffffffff"
+            android:textSize="@dimen/sm_30" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,151 @@
+apply plugin: 'com.android.application'
+
+// 确保使用正确的 Java 版本和 Android SDK
+android {
+
+    // AGP 7.0+ 使用 lint 块（推荐），但 lintOptions 仍然支持
+    lint {
+        // 启用release构建的lint检查
+        checkReleaseBuilds false
+        // 设置为false可以在构建时不中断，但会在lint报告中显示问题
+        abortOnError false
+        // 只检查关键问题，加快构建速度
+        checkAllWarnings false
+        // 忽略某些非关键警告
+        ignoreWarnings false
+        // 静默已废弃的API警告（因为可能还在使用旧库）
+        disable 'ObsoleteLintCustomCheck'
+        // 关闭 targetSdkVersion 过期检查，避免阻塞构建
+        disable 'ExpiredTargetSdkVersion'
+        // 如有需要，可以在此追加其它不关心的检查 ID
+        // 例如：disable 'MissingDefaultResource', 'GoogleAppIndexingWarning'
+    }
+    compileSdkVersion 30
+    // AGP 7.0+ 会自动管理 buildToolsVersion，但也可以手动指定
+    buildToolsVersion "30.0.3"
+    
+    // 指定 NDK 版本（AGP 7.0+ 兼容 NDK 21.4.7075529）
+    ndkVersion "21.4.7075529"
+    
+    defaultConfig {
+        applicationId "com.www.baidu"
+        useLibrary 'org.apache.http.legacy'
+        //minSdkVersion 15
+//        minSdkVersion 18
+        minSdkVersion 19  // Android 4.4 (KitKat)
+        targetSdkVersion 23
+        versionName '1.0'
+        // 启用 multidex 支持（解决 65K 方法数限制）
+        multiDexEnabled true
+        ndk {
+            //设置支持的SO库架构
+            abiFilters "armeabi-v7a"
+        }
+    }
+    
+    // CMake配置
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+
+    //打包APK默认名称格式
+//    android.applicationVariants.all { variant ->
+//        variant.outputs.all { output ->
+//            def date = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08"))
+//            def suffix = (variant.signingConfig == null) ? "Unsigned" : "Signed"
+//            def channel = new String(output.name).split("-")
+//            outputFileName = "test_player" + "_${date}_${suffix}.apk"
+//        }
+//    }
+
+    buildTypes {
+        release {
+            // 启用zip对齐（可以减小APK大小并提高运行时性能）
+            zipAlignEnabled true
+            // 禁用代码混淆（避免 R8 编译失败）
+            // 注意：shrinkResources 需要 minifyEnabled 为 true，所以已禁用
+            minifyEnabled false
+            // 不支持调试（release版本）
+            debuggable false
+            // ProGuard规则文件（已禁用混淆，此配置不会生效）
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            // 签名在服务器上进行，不在此配置
+        }
+        debug {
+            // Debug版本保持快速构建
+            minifyEnabled false
+            debuggable true
+        }
+    }
+    productFlavors {
+    }
+    compileOptions {
+        // 注意：虽然使用 JDK 17 运行 Gradle，但编译目标必须设置为 Java 11
+        // 因为 Android Gradle Plugin 7.0.4 的 R8/D8 工具不支持 Java 17 字节码（class file major version 61）
+        // JDK 17 用于运行构建工具，但编译出的字节码必须是 Java 11 格式
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        // 如果代码中使用了 Lambda、Stream API 等 Java 8+ 运行时特性，需要启用 desugaring
+        // 当前代码未使用这些特性，所以不需要 desugaring
+        // coreLibraryDesugaringEnabled true
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
+
+    /*谷歌播放器*/
+//    implementation 'com.google.android.exoplayer:exoplayer:r1.5.11'
+//    implementation 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.8'
+//    implementation 'org.dync.kathline:ijkplayer-exo2:0.8.8'//请直接依赖ijkplayer中的exo即可
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.9.1'//核心功能（必需）
+    implementation 'com.google.android.exoplayer:extension-rtmp:2.9.1'//rtmp直播流解码协议
+    //以下为可选依赖，请根据需要实现
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.9.1'//支持DASH内容
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.9.1'//支持HLS内容
+
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    // Multidex 支持（解决 65K 方法数限制）
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation files('libs/android-support-v7.jar')
+    implementation 'com.google.code.gson:gson:2.2.4'
+    implementation files('libs/AndroidHttpServer-1.0.3.jar')
+    implementation files('libs/afinal-0.3.32-bin.jar')
+    implementation files('libs/cyberplayer-sdk.jar')
+    implementation files('libs/lisenencoder.jar')
+    implementation files('libs/shenma.jar')
+    implementation files('libs/jsoup-1.7.2.jar')
+    implementation files('libs/okio.jar')
+    implementation files('libs/okhttp3.jar')
+    implementation files('libs/glide.jar')
+    implementation files('libs/httpclient-4.5.8.jar')
+    implementation files('libs/umeng-sdk.jar')
+    implementation files('libs/universal-image-loader-1.8.6.jar')
+    implementation files('libs/volley.jar')
+    implementation files('libs/core-3.3.0.jar')
+    implementation 'org.jetbrains:annotations-java5:15.0'
+//    implementation 'androidx.cardview:cardview:1.0.0'//圆角api
+//    implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'//圆角api
+//    implementation 'com.kxml2:kxml2:2.3.0'
+//    compile group: 'net.sf.kxml', name: 'kxml2', version:'2.3.0'
+     implementation group: 'net.sf.kxml', name: 'kxml2', version:'2.3.0'
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    //弹幕引擎 - 支持Android 4.0+
+    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
+
+
+    //阿里内核
+	implementation files('libs/AliyunPlayer-5.4.4.1-full.aar')
+//    implementation 'com.aliyun.sdk.android:AliyunPlayer:5.4.4.1-full@aar'
+}
+
+// 修复 clean 任务中的路径缓存问题
+// 当项目路径改变时，可能会尝试清理不存在的旧路径
+// 注意：如果 clean 任务失败，可以使用 --continue 标志继续构建
+// 或者直接构建而不执行 clean：./gradlew assembleRelease

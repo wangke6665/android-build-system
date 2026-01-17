@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".HomeActivity">
+
+    <!-- 全屏背景图 - 最底层，覆盖整个屏幕 -->
+    <ImageView
+        android:id="@+id/iv_bg_infinity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/main_bg"/>
+
+    <!-- 左侧渐变遮罩 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_gradient_left_infinity"/>
+
+    <!-- 底部渐变遮罩 - 使用百分比高度覆盖底部推荐区域 -->
+    <View
+        android:id="@+id/bottom_gradient_mask"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_gradient_bottom_infinity"/>
+
+    <!-- 兼容性隐藏控件 -->
+    <RelativeLayout
+        android:id="@+id/rl_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+    <!-- 主内容布局 - 使用FrameLayout替代ConstraintLayout以兼容Android 4.x -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <!-- 主内容区域 ViewPager - 放在最底层 -->
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"/>
+
+        <!-- 上部分类导航栏 - 隐藏，分类标签在Fragment中显示 -->
+        <LinearLayout
+            android:id="@+id/top_category_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone">
+            
+            <!-- Logo - 隐藏 -->
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+            
+            <!-- 分类容器 - 隐藏 -->
+            <LinearLayout
+                android:id="@+id/title_group"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone">
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 右上角信息栏 - 隐藏，时间在Fragment中显示 -->
+        <LinearLayout
+            android:id="@+id/top_info_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone">
+
+            <!-- 网络状态 - 隐藏但保留ID -->
+            <ImageView
+                android:id="@+id/iv_net_state"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+
+            <!-- 时间 - 隐藏但保留ID -->
+            <TextView
+                android:id="@+id/tv_main_time"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+                
+            <!-- 隐藏的时间冒号和日期，保留ID防止崩溃 -->
+             <TextView
+                android:id="@+id/time_colon"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+            <TextView
+                android:id="@+id/tv_main_date"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <!-- 兼容性隐藏控件 -->
+        <LinearLayout
+            android:id="@+id/mains"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"/>
+            
+        <LinearLayout
+            android:id="@+id/gonggao_root"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone">
+             <com.shenma.tvlauncher.view.AlwaysMarqueeTextView android:id="@+id/gonggao" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        </LinearLayout>
+        
+        <LinearLayout
+             android:id="@+id/ll_rb"
+             android:layout_width="0dp"
+             android:layout_height="0dp"
+             android:visibility="gone"/>
+             
+        <ImageView
+             android:id="@+id/iv_titile"
+             android:layout_width="0dp"
+             android:layout_height="0dp"
+             android:visibility="gone"/>
+
+        <LinearLayout
+             android:id="@+id/rg_video_type_bottoms"
+             android:layout_width="0dp"
+             android:layout_height="0dp"
+             android:visibility="gone">
+             <RadioGroup android:id="@+id/rg_video_type_bottom" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        </LinearLayout>
+        
+         <TextView
+            android:id="@+id/tv_update_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+         <LinearLayout
+            android:id="@+id/main"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone">
+             <ImageView android:id="@+id/iv_main_line" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!--弹窗公告-->
+        <RelativeLayout
+            android:gravity="center"
+            android:id="@+id/notice"
+            android:background="@android:color/transparent"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/notice_iamge_url"
+                android:layout_width="@dimen/sm_750"
+                android:layout_height="@dimen/sm_500"
+                android:scaleType="fitXY"
+                android:layout_centerInParent="true" />
+            <TextView
+                android:id="@+id/notice_button"
+                android:visibility="gone"
+                android:textSize="@dimen/sm_20"
+                android:textColor="@color/white"
+                android:background="@drawable/button_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/sm_10"
+                android:layout_marginBottom="@dimen/sm_10"
+                android:text="@string/returns"
+                android:layout_alignRight="@id/notice_iamge_url"
+                android:layout_alignBottom="@id/notice_iamge_url" />
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

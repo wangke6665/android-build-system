@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sm_425"
+        android:gravity="center" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <FrameLayout
+            android:id="@+id/tv_fl_re_0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sm_13">
+
+            <ImageView
+                android:id="@+id/tv_bg_0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/tv_iv_livetv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:nextFocusUp="@+id/rb_Internet"
+                android:scaleType="fitXY"
+                android:src="@drawable/livetv" />
+        </FrameLayout>
+    </RelativeLayout>
+</FrameLayout>

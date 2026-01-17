@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中/焦点状态 - 青色渐变填充 -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <gradient
+                android:startColor="#00D4FF"
+                android:endColor="#0099FF"
+                android:angle="0"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- 选中时 -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <gradient
+                android:startColor="#00D4FF"
+                android:endColor="#0099FF"
+                android:angle="0"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- 默认状态 - 透明 -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</selector>

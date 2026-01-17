@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/wellco"
+    android:background="#FAFAFA"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="1">
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="神马视频 APP 用户协议"
+                android:textColor="#DD1759"
+                android:textSize="25dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="欢迎您使用神马视频 APP！在使用本 APP 之前，请您仔细阅读本用户协议（以下简称 “本协议”）。本协议包含了您使用本 APP 时的权利和义务，以及我们的责任和声明。您使用本 APP 即视为您已阅读、理解并同意接受本协议的约束。"
+                android:textColor="#0B0A0A"
+                android:textSize="8dp" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="10dp"
+                    android:text="一、服务内容"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="6dp"
+                    android:text="1.神马视频 APP 为您提供包括但不限于视频搜索、播放、VIP 服务、历史记录、登录等功能。\n2.
+本 APP 所提供的视频内容来自第三方，我们仅作为视频信息的聚合平台。若您发现任何侵权内容，请及时联系我们，我们将依法采取措施进行删除或屏蔽。"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:textStyle="bold"
+                    android:textSize="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="二、用户权利与义务"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="6dp"
+                    android:text="1.注册与登录：您有权注册并登录神马视频 APP，以享受个性化服务。您应确保注册信息的真实性、准确性和完整性，并妥善保管您的账号和密码。因您账号或密码泄露导致的一切后果，由您自行承担。
+\n2.搜索与使用：您可以使用本 APP 的搜索功能查找您感兴趣的视频。在使用过程中，您应遵守法律法规，不得利用本 APP 进行任何违法违规活动，包括但不限于传播淫秽、暴力、恐怖、侵权等内容。​
+\n3.历史记录：本 APP 会记录您的观看历史，方便您快速找到之前观看过的视频。您有权随时查看和清除您的历史记录。​
+\n4.VIP 服务：若您选择购买 VIP 服务，您将享受相应的特权，如无广告观看、独家内容等。具体的 VIP 服务内容和期限以您购买时的约定为准。您应按照我们的规定支付 VIP 费用，如因您未按时支付费用导致服务中断，我们不承担责任。"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="10dp"
+                    android:text="三、知识产权声明"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="6dp"
+                    android:text="1.本 APP 的所有内容，包括但不限于界面设计、文字、图片、视频等，均受法律法规保护，其知识产权归我们或相关权利人所有。未经我们或相关权利人书面许可，您不得复制、传播、修改、出售或以其他方式使用本 APP 的任何内容。\n
+2.0如前所述，本 APP 的视频内容来自第三方。若因第三方提供的视频内容侵犯了任何第三方的知识产权，相关法律责任由第三方承担。我们一经收到侵权通知，将立即采取措施删除或屏蔽相关内容。若您认为本 APP 中的内容侵犯了您的知识产权，请您及时与我们联系，并提供相关证明材料，我们将依法处理。"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:textStyle="bold"
+                    android:textSize="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="四、责任限制与免责声明"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:textSize="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="本程序所以节目均来自互联网站，本程序只做聚合应用，不存储、不制作任何视频，不承担任何由于内容的合法性及健康性所引起的争议和法律责任。仅作测试学习之用，不准应用于商业。"
+                    android:textColor="#D10F0F"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="8dp"
+                    android:text="1.尽管我们会尽力确保本 APP 的正常运行和视频内容的质量，但由于互联网的复杂性和不确定性，我们无法保证本 APP 不会出现故障、中断或视频内容的准确性、完整性。对于因网络故障、第三方原因等导致的服务中断、数据丢失或其他损失，我们不承担责任。\n
+2.对于您通过本 APP 链接到的第三方网站或服务，我们不承担任何责任。您使用第三方网站或服务时，应遵守其相关的用户协议和隐私政策。\n
+3.由于本 APP 的视频内容来自第三方，对于第三方提供的视频内容可能导致的任何直接或间接的法律责任、刑事责任、经济损失等，我们一律不负责任。您在使用本 APP 观看视频时，应自行判断视频内容的合法性和安全性。"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:textStyle="bold"
+                    android:text="五、隐私政策"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="10dp"/>
+                <TextView
+
+                    android:layout_marginRight="10dp"
+                    android:text="我们重视您的隐私保护。我们将按照我们的隐私政策收集、使用、存储和保护您的个人信息。您可以在本 APP 中查看我们的隐私政策，了解我们如何处理您的个人信息。"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="8dp" />
+                <TextView
+                    android:textStyle="bold"
+                    android:text="六、协议的变更与终止"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="10dp" />
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:text="1.我们有权根据法律法规的变化或业务需要，随时对本协议进行修改。修改后的协议将在本 APP 中公布，您继续使用本 APP 即视为您已接受修改后的协议。\n
+2.若您违反本协议的任何条款，我们有权随时终止您对本 APP 的使用，并保留追究您法律责任的权利。"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="8dp" />
+                <TextView
+                    android:textStyle="bold"
+                    android:text="七、争议解决"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="8dp" />
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:text="如您与我们在本协议的履行过程中发生争议，双方应首先友好协商解决；协商不成的，任何一方均有权向有管辖权的人民法院提起诉讼。
+请您在使用本 APP 之前，务必仔细阅读并理解本协议的全部内容。如有任何疑问，请联系我们的客服人员。感谢您对神马视频 APP 的支持与使用！"
+                    android:textColor="#0B0A0A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+</LinearLayout>

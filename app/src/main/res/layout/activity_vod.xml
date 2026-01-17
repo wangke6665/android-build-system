@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vod"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:id="@+id/type_details"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/sm_35"
+        android:paddingTop="@dimen/sm_10"
+        android:paddingRight="@dimen/sm_35">
+
+        <LinearLayout
+            android:id="@+id/ll_type_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/type_details_type"
+                android:textSize="@dimen/sm_38"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sm_2"
+                android:text="" />
+
+            <ImageView
+                android:layout_width="@dimen/sm_10"
+                android:layout_height="@dimen/sm_70"
+                android:layout_marginLeft="@dimen/sm_10"
+                android:src="@drawable/vod_line35" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/type_details_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sm_2"
+                android:layout_marginTop="@dimen/sm_5"
+                android:text="@string/type_details_sum"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sm_32" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/type_details_text"
+                android:textSize="@dimen/sm_26"
+                android:textColor="@color/vip_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sm_60"
+                android:text=""
+                android:singleLine="true"/>
+
+        </LinearLayout>
+
+        <!-- 筛选选项头部 -->
+        <include
+            android:id="@+id/type_details_filter_header"
+            layout="@layout/mv_type_details_filter_header"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_type_details"
+            android:layout_marginTop="@dimen/sm_10"
+            android:layout_marginBottom="@dimen/sm_10" />
+
+        <ImageView
+            android:id="@+id/iv_line760"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/sm_5"
+            android:layout_below="@+id/type_details_filter_header"
+            android:layout_marginBottom="@dimen/sm_5"
+            android:scaleType="fitXY"
+            android:src="@drawable/vod_line761" />
+
+        <GridView
+            android:id="@+id/type_details_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/iv_line760"
+            android:numColumns="6"
+            android:scrollbars="none"
+            android:scrollingCache="true"
+            android:smoothScrollbar="true"
+            android:stretchMode="columnWidth" />
+    </RelativeLayout>
+
+</FrameLayout>

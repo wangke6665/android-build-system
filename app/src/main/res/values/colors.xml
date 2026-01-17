@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffffff</color>
+    <color name="blue">#ff0000ff</color>
+    <color name="dark">#ffb2b2b2</color>
+    <color name="green">#ffb2ffb2</color>
+    <color name="detail_point">#ffffaa00</color>
+    <color name="detail_main_text">#ff999999</color>
+    <color name="them_color">#e9dd5a86</color>
+    <color name="black">#ff000000</color>
+    <color name="red">#ffee2200</color>
+    <color name="blue_user">#ff00a8ff</color>
+    <color name="dark_404040">#ff404040</color>
+    <color name="title_fouse">#ff007aff</color>
+    <color name="title_fouse_n">#ffce7900</color>
+    <color name="title_top">#ff81d7ff</color>
+    <color name="title_top_n">#ffffffff</color>
+    <color name="player_back">#ff384e63</color>
+    <color name="configuration_turn_on">#ffffffff</color>
+    <color name="configuration_turn_off">#ffa9a9a9</color>
+    <color name="text_focus">#ff1ea5fa</color>
+    <color name="btn_grey">#809e9e9e</color>
+    <color name="video_banner_text_bg">#99000000</color>
+    <color name="brown">#A52A2A</color>
+    <color name="purple">#800080</color>
+    <color name="darkgreen">#006400</color>
+    <color name="tomato">#ff6666</color>
+    <color name="whites">#f8efee</color>
+    <color name="gonggao">#33757575</color>
+    <color name="bg_input">#FFFF1744</color>
+    <color name="bg_input2">#FFFF3D00</color>
+    <color name="khaki">#f0e68c</color>
+    <color name="palegoldenrod">#eee8aa</color>
+    <color name="vip_item_price">#FFEED1C1</color>
+    <color name="Score">#ff6f0f</color>
+    <color name="score_bg">#66000000</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="screen_bg">@color/white</color>
+    <color name="bordercolor">@color/darkgray</color>
+    <color name="darkgray">#666</color>
+    <color name="chat_box_border">#BBB</color>
+    <color name="chat_box_bg">#EEE</color>
+    <color name="selector">#55000000</color>
+
+    <color name="epg">#ffa7abac</color>
+    <color name="darkwhite">#999</color>
+</resources>

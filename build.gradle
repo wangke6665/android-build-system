@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        // 优先使用阿里云镜像加速
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://www.jitpack.io' }
+        // jcenter已废弃，但某些旧库可能还需要，放在后面作为fallback
+        // maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        mavenLocal()
+        // 最后使用官方仓库作为fallback
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Android Gradle Plugin 7.0.4 支持 Java 17
+        // AGP 7.0+ 支持 Android 4.4 (API 19) 及更高版本
+        // 如需更好的 Java 17 支持，可升级到 AGP 7.2+ 或更高版本
+        classpath 'com.android.tools.build:gradle:7.0.4'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        // 优先使用阿里云镜像加速
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://www.jitpack.io' }
+        // jcenter已废弃，但某些旧库可能还需要，放在后面作为fallback
+        // maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        mavenLocal()
+        // 最后使用官方仓库作为fallback
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中+焦点 -->
+    <item android:state_selected="true" android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000" />
+            <stroke android:width="2dp" android:color="#2196F3" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <!-- 选中（正在播放）- 透明背景，无边框 -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <!-- 焦点 -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000" />
+            <stroke android:width="2dp" android:color="#2196F3" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <!-- 按下 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#1976D2" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <!-- 默认 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#3d4559" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+</selector>

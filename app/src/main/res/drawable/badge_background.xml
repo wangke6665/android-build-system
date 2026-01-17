@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/detailsource_bg_s" />
+    <item
+        android:id="@+id/badge"
+        android:drawable="@drawable/badge_background_shape"
+        android:gravity="center"
+        android:padding="2dp" />
+</layer-list>

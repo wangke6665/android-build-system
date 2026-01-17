@@ -1,0 +1,805 @@
+name: Android APK Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: "任务ID（必需）"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BACKEND_URL: ${{ secrets.SIGN_SERVER_URL }}
+      BACKEND_TOKEN: ${{ secrets.SIGN_SERVER_TOKEN }}
+      SKIP_JDK_VERSION_CHECK: "true"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate task ID
+        id: validate_task
+        env:
+          BACKEND_URL: ${{ secrets.SIGN_SERVER_URL }}
+          BACKEND_TOKEN: ${{ secrets.SIGN_SERVER_TOKEN }}
+        run: |
+          echo "=== 获取任务 ID ==="
+          
+          # 调试：检查环境变量（不显示完整值，只显示是否设置）
+          echo "调试信息："
+          if [ -z "$BACKEND_URL" ]; then
+            echo "  SIGN_SERVER_URL: 未设置"
+          else
+            echo "  SIGN_SERVER_URL: 已设置（长度: ${#BACKEND_URL} 字符）"
+            echo "  SIGN_SERVER_URL 前缀: ${BACKEND_URL:0:20}..."
+          fi
+          
+          if [ -z "$BACKEND_TOKEN" ]; then
+            echo "  SIGN_SERVER_TOKEN: 未设置"
+          else
+            echo "  SIGN_SERVER_TOKEN: 已设置（长度: ${#BACKEND_TOKEN} 字符）"
+            echo "  SIGN_SERVER_TOKEN 前缀: ${BACKEND_TOKEN:0:10}..."
+          fi
+          echo ""
+          
+          if [ -z "$BACKEND_URL" ] || [ -z "$BACKEND_TOKEN" ]; then
+            echo "错误: 未配置服务器 URL 或 Token，无法获取或创建任务" >&2
+            echo "" >&2
+            echo "提示: 打包必须生成任务 ID。请：" >&2
+            echo "  1. 配置 GitHub Secrets: SIGN_SERVER_URL 和 SIGN_SERVER_TOKEN" >&2
+            echo "  2. 检查 Secrets 名称是否正确（区分大小写）" >&2
+            echo "  3. 或者通过 workflow_dispatch 手动触发时提供 task_id 参数" >&2
+            exit 1
+          fi
+          
+          # 构建 API URL
+          echo ""
+          echo "=== 构建 API URL ==="
+          echo "检查 BACKEND_URL 环境变量："
+          echo "  BACKEND_URL 值: [$BACKEND_URL]"
+          echo "  BACKEND_URL 长度: ${#BACKEND_URL} 字符"
+          echo "  BACKEND_URL 类型检查: $(echo "$BACKEND_URL" | head -c 50)"
+          echo ""
+          
+          # 再次验证 BACKEND_URL 的值
+          if [ -z "$BACKEND_URL" ]; then
+            echo "错误: BACKEND_URL 为空" >&2
+            exit 1
+          fi
+          
+          # 检查 BACKEND_URL 是否包含协议
+          if [[ ! "$BACKEND_URL" =~ ^https?:// ]]; then
+            echo "警告: BACKEND_URL 不包含协议，可能是相对路径" >&2
+            echo "  BACKEND_URL 值: [$BACKEND_URL]" >&2
+          fi
+          
+          # 移除可能的尾部斜杠
+          BACKEND_URL=$(echo "$BACKEND_URL" | sed 's|/$||')
+          
+          # 从 URL 中提取主机和端口信息用于调试
+          if [[ "$BACKEND_URL" =~ ^https?://([^:/]+)(:([0-9]+))? ]]; then
+            HOST="${BASH_REMATCH[1]}"
+            PORT="${BASH_REMATCH[3]:-80}"
+            if [[ "$BACKEND_URL" =~ ^https:// ]]; then
+              PORT="${BASH_REMATCH[3]:-443}"
+            fi
+            echo "从 BACKEND_URL 解析的信息："
+            echo "  主机: $HOST"
+            echo "  端口: $PORT"
+            echo "  协议: $(echo "$BACKEND_URL" | grep -oE '^https?://' | sed 's|://||')"
+          fi
+          
+          CREATE_TASK_URL="${BACKEND_URL}/api/github/create_task"
+          UPDATE_LOG_URL="${BACKEND_URL}/api/github/update_log"
+          WORKFLOW_RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          
+          echo ""
+          echo "构建的 URL："
+          echo "  BACKEND_URL (处理后): [$BACKEND_URL]"
+          echo "  CREATE_TASK_URL: [$CREATE_TASK_URL]"
+          echo "  UPDATE_LOG_URL: [$UPDATE_LOG_URL]"
+          echo "  WORKFLOW_RUN_URL: [$WORKFLOW_RUN_URL]"
+          echo ""
+          
+          # 定义发送日志到后台的函数（用于实时日志）
+          send_log_to_backend() {
+            local log_line="$1"
+            if [ -n "$TASK_ID" ] && [ -n "$UPDATE_LOG_URL" ] && [ -n "$BACKEND_TOKEN" ]; then
+              # 转义特殊字符，避免 curl 参数问题
+              log_line_escaped=$(printf '%s\n' "$log_line" | sed "s/'/'\\\\''/g")
+              # 异步发送，不阻塞构建过程
+              curl -X POST "$UPDATE_LOG_URL" \
+                -H "Authorization: Bearer $BACKEND_TOKEN" \
+                -F "task_id=$TASK_ID" \
+                -F "log_content=$log_line_escaped" \
+                -sS --connect-timeout 5 --max-time 10 >/dev/null 2>&1 &
+            fi
+          }
+          
+          # 导出函数和变量，供后续步骤使用
+          export -f send_log_to_backend
+          export UPDATE_LOG_URL
+          export BACKEND_TOKEN
+          
+          # 测试网络连接（仅测试主机和端口，不发送 HTTP 请求）
+          if [ -n "$HOST" ] && [ -n "$PORT" ]; then
+            echo "=== 网络连接测试 ==="
+            echo "测试连接到 $HOST:$PORT ..."
+            if timeout 5 bash -c "echo >/dev/tcp/$HOST/$PORT" 2>/dev/null; then
+              echo "✓ 可以连接到 $HOST:$PORT"
+            else
+              echo "✗ 无法连接到 $HOST:$PORT（可能是防火墙或服务器未运行）"
+              echo "  提示：请检查："
+              echo "    1. 服务器是否正在运行"
+              echo "    2. 防火墙是否允许 GitHub Actions IP 访问"
+              echo "    3. 端口号是否正确（当前: $PORT）"
+            fi
+            echo ""
+          fi
+          
+          # 检查是否提供了 task_id（workflow_dispatch 触发时可能提供）
+          PROVIDED_TASK_ID="${{ inputs.task_id }}"
+          
+          # 如果没有通过 inputs 提供，尝试从 commit message 中提取
+          # 格式：[TASK:123] 或 task_id:123 或 #123
+          if [ -z "$PROVIDED_TASK_ID" ]; then
+            COMMIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo "")
+            
+            echo "调试信息："
+            echo "  Commit SHA: ${COMMIT_SHA:0:20}..."
+            
+            # 检查是否是 merge commit（有多个父 commit）
+            PARENT_COUNT=$(git rev-list --count --parents HEAD 2>/dev/null || echo "1")
+            COMMIT_MSG_CHECK=$(git log -1 --pretty=%B HEAD 2>/dev/null | grep -i "merge" || echo "")
+            
+            if [ "$PARENT_COUNT" -gt 1 ] || [ -n "$COMMIT_MSG_CHECK" ]; then
+              echo "  检测到 merge commit，查找原始 commit（build_script.php 提交的）..."
+              
+              # 对于 merge commit，优先查找第一个父 commit（通常是 build_script.php 提交的）
+              FIRST_PARENT=$(git rev-parse HEAD^1 2>/dev/null || echo "")
+              SECOND_PARENT=$(git rev-parse HEAD^2 2>/dev/null || echo "")
+              
+              echo "  第一个父 commit: ${FIRST_PARENT:0:20}..."
+              if [ -n "$SECOND_PARENT" ]; then
+                echo "  第二个父 commit: ${SECOND_PARENT:0:20}..."
+              fi
+              
+              # 先尝试从第一个父 commit 提取（通常是 build_script.php 提交的，包含 [TASK:123]）
+              if [ -n "$FIRST_PARENT" ]; then
+                COMMIT_MSG=$(git log -1 --pretty=%B "$FIRST_PARENT" 2>/dev/null || echo "")
+                if [ -n "$COMMIT_MSG" ]; then
+                  echo "  第一个父 commit message: ${COMMIT_MSG:0:100}..."
+                  
+                  # 检查第一个父 commit 是否包含任务 ID
+                  if echo "$COMMIT_MSG" | grep -qE '\[TASK:[0-9]+\]|task_id:[0-9]+|#[0-9]+'; then
+                    echo "  ✓ 第一个父 commit 包含任务 ID 格式"
+                  else
+                    echo "  ✗ 第一个父 commit 不包含任务 ID 格式，尝试第二个父 commit"
+                    COMMIT_MSG=""  # 清空，尝试第二个父 commit
+                  fi
+                else
+                  echo "  警告: 无法获取第一个父 commit 的 message"
+                  COMMIT_MSG=""
+                fi
+              fi
+              
+              # 如果第一个父 commit 没有找到任务 ID，尝试第二个父 commit（merge 进来的提交）
+              if [ -z "$COMMIT_MSG" ] && [ -n "$SECOND_PARENT" ]; then
+                COMMIT_MSG=$(git log -1 --pretty=%B "$SECOND_PARENT" 2>/dev/null || echo "")
+                if [ -n "$COMMIT_MSG" ]; then
+                  echo "  第二个父 commit message: ${COMMIT_MSG:0:100}..."
+                else
+                  echo "  警告: 无法获取第二个父 commit 的 message"
+                fi
+              fi
+              
+              # 如果还是没找到，尝试查找最近的非 merge commit（可能是 build_script.php 提交的）
+              if [ -z "$COMMIT_MSG" ] || ! echo "$COMMIT_MSG" | grep -qE '\[TASK:[0-9]+\]|task_id:[0-9]+|#[0-9]+'; then
+                echo "  尝试查找最近的非 merge commit..."
+                COMMIT_MSG=$(git log --no-merges -1 --pretty=%B 2>/dev/null || echo "")
+                echo "  最近的非 merge commit message: ${COMMIT_MSG:0:100}..."
+              fi
+            else
+              # 不是 merge commit，直接读取当前 commit 的 message
+              COMMIT_MSG=$(git log -1 --pretty=%B HEAD 2>/dev/null || echo "")
+              echo "  Commit Message: ${COMMIT_MSG:0:100}..."
+            fi
+            
+            if [ -n "$COMMIT_MSG" ]; then
+              # 尝试提取 [TASK:123] 格式
+              EXTRACTED_ID=$(echo "$COMMIT_MSG" | grep -oE '\[TASK:[0-9]+\]' | grep -oE '[0-9]+' | head -n 1)
+              if [ -n "$EXTRACTED_ID" ]; then
+                PROVIDED_TASK_ID="$EXTRACTED_ID"
+                echo "✓ 已从 commit message 中提取到任务 ID: $PROVIDED_TASK_ID"
+              else
+                # 尝试提取 task_id:123 格式
+                EXTRACTED_ID=$(echo "$COMMIT_MSG" | grep -oE 'task_id:[0-9]+' | grep -oE '[0-9]+' | head -n 1)
+                if [ -n "$EXTRACTED_ID" ]; then
+                  PROVIDED_TASK_ID="$EXTRACTED_ID"
+                  echo "✓ 已从 commit message 中提取到任务 ID: $PROVIDED_TASK_ID (格式: task_id:...)"
+                else
+                  # 尝试提取 #123 格式（在行首或空格后）
+                  EXTRACTED_ID=$(echo "$COMMIT_MSG" | grep -oE '(^|[[:space:]])#[0-9]+' | grep -oE '[0-9]+' | head -n 1)
+                  if [ -n "$EXTRACTED_ID" ]; then
+                    PROVIDED_TASK_ID="$EXTRACTED_ID"
+                    echo "✓ 已从 commit message 中提取到任务 ID: $PROVIDED_TASK_ID (格式: #...)"
+                  else
+                    echo "✗ 无法从 commit message 中提取任务 ID"
+                    echo "  Commit message 内容: $COMMIT_MSG"
+                  fi
+                fi
+              fi
+            else
+              echo "✗ Commit message 为空"
+            fi
+            echo ""
+          fi
+          
+          # 如果还没找到，尝试从分支名中提取
+          # 格式：task-123 或 task_123 或 task/123
+          if [ -z "$PROVIDED_TASK_ID" ]; then
+            BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+            EXTRACTED_ID=$(echo "$BRANCH_NAME" | grep -oE 'task[-_/][0-9]+' | grep -oE '[0-9]+' | head -n 1)
+            if [ -n "$EXTRACTED_ID" ]; then
+              PROVIDED_TASK_ID="$EXTRACTED_ID"
+              echo "从分支名中提取到任务 ID: $PROVIDED_TASK_ID"
+            fi
+          fi
+          
+          # 如果从 commit message 中提取到了任务 ID，直接使用它
+          # build_script.php 提交时会在 commit message 中包含 [TASK:123] 格式
+          if [ -n "$PROVIDED_TASK_ID" ]; then
+            echo "正在验证任务 ID 是否存在..."
+            echo ""
+            
+            # 从 URL 中提取主机和端口用于网络诊断
+            if [[ "$BACKEND_URL" =~ ^https?://([^:/]+)(:([0-9]+))? ]]; then
+              HOST="${BASH_REMATCH[1]}"
+              PORT="${BASH_REMATCH[3]:-80}"
+              if [[ "$BACKEND_URL" =~ ^https:// ]]; then
+                PORT="${BASH_REMATCH[3]:-443}"
+              fi
+              
+              echo "=== 网络连接诊断 ==="
+              echo "目标服务器: $HOST:$PORT"
+              echo "GitHub Actions Runner IP: $(curl -s ifconfig.me 2>/dev/null || echo '无法获取')"
+              echo ""
+              
+              # 测试基本网络连通性（ping）
+              echo "测试网络连通性..."
+              if ping -c 3 -W 5 "$HOST" >/dev/null 2>&1; then
+                echo "✓ 可以 ping 通 $HOST"
+              else
+                echo "✗ 无法 ping 通 $HOST（可能是防火墙阻止了 ICMP）"
+              fi
+              
+              # 测试端口连通性（使用 nc 或 timeout + /dev/tcp）
+              echo "测试端口 $PORT 连通性..."
+              if command -v nc >/dev/null 2>&1; then
+                if timeout 5 nc -z "$HOST" "$PORT" 2>/dev/null; then
+                  echo "✓ 端口 $PORT 可以连接"
+                else
+                  echo "✗ 端口 $PORT 无法连接（可能是防火墙或服务未运行）"
+                fi
+              elif timeout 3 bash -c "echo >/dev/tcp/$HOST/$PORT" 2>/dev/null; then
+                echo "✓ 端口 $PORT 可以连接"
+              else
+                echo "✗ 端口 $PORT 无法连接（可能是防火墙或服务未运行）"
+                echo "  提示：请检查："
+                echo "    1. 服务器是否正在运行并监听端口 $PORT"
+                echo "    2. 防火墙是否允许 GitHub Actions 的 IP 访问"
+                echo "    3. 服务器是否配置了 IP 白名单"
+              fi
+              echo ""
+            fi
+            
+            # 验证任务 ID 是否存在（增加超时时间）
+            echo "发送验证请求到: $CREATE_TASK_URL"
+            RESPONSE=$(curl -X POST "$CREATE_TASK_URL" \
+              -H "Authorization: Bearer $BACKEND_TOKEN" \
+              -F "task_id=${PROVIDED_TASK_ID}" \
+              -F "workflow_run_url=${WORKFLOW_RUN_URL}" \
+              -F "trigger_type=${GITHUB_EVENT_NAME}" \
+              -F "commit_sha=${GITHUB_SHA}" \
+              -F "commit_ref=${GITHUB_REF}" \
+              -sS -w "\nHTTP_CODE:%{http_code}" \
+              --connect-timeout 60 \
+              --max-time 120 \
+              -v 2>&1) || {
+              echo "错误: 验证任务 ID 请求失败" >&2
+              echo "响应: $RESPONSE" >&2
+              echo "" >&2
+              echo "提示: 无法验证提供的任务 ID。请确保：" >&2
+              echo "  1. 服务器正在运行并监听端口 $PORT" >&2
+              echo "  2. 防火墙允许 GitHub Actions IP 访问" >&2
+              echo "  3. 服务器提供了 /api/github/create_task 接口" >&2
+              exit 1
+            }
+          else
+            # 没有从 commit message 中提取到任务 ID，尝试从服务器查找
+            echo "未从 commit message 中提取到任务 ID，尝试从服务器查找..."
+            echo ""
+            # 没有提供 task_id，服务器会查找或创建
+            # 检查是否是 merge commit，如果是，也传入第一个父 commit 的 SHA
+            PARENT_COMMIT_SHA=""
+            # 使用更可靠的方法检测 merge commit
+            # 方法1: 检查父 commit 数量
+            PARENT_COUNT=$(git rev-list --count --parents HEAD 2>/dev/null || echo "1")
+            # 方法2: 检查 commit message 是否包含 "Merge"
+            COMMIT_MSG_CHECK=$(git log -1 --pretty=%B HEAD 2>/dev/null | grep -i "merge" || echo "")
+            
+            if [ "$PARENT_COUNT" -gt 1 ] || [ -n "$COMMIT_MSG_CHECK" ]; then
+              # 是 merge commit，获取第一个父 commit 的 SHA
+              PARENT_COMMIT_SHA=$(git rev-parse HEAD^1 2>/dev/null || echo "")
+              if [ -z "$PARENT_COMMIT_SHA" ]; then
+                # 如果 HEAD^1 失败，尝试使用 GITHUB_SHA 的父 commit
+                PARENT_COMMIT_SHA=$(git rev-parse "${GITHUB_SHA}^1" 2>/dev/null || echo "")
+              fi
+              if [ -n "$PARENT_COMMIT_SHA" ]; then
+                echo "检测到 merge commit，第一个父 commit SHA: ${PARENT_COMMIT_SHA:0:20}..."
+              else
+                echo "警告: 检测到 merge commit，但无法获取父 commit SHA"
+              fi
+            fi
+            
+            # 构建请求参数
+            CURL_PARAMS=(
+              -F "workflow_run_url=${WORKFLOW_RUN_URL}"
+              -F "trigger_type=${GITHUB_EVENT_NAME}"
+              -F "commit_sha=${GITHUB_SHA}"
+              -F "commit_ref=${GITHUB_REF}"
+            )
+            
+            # 如果有父 commit SHA，也传入
+            if [ -n "$PARENT_COMMIT_SHA" ]; then
+              CURL_PARAMS+=(-F "parent_commit_sha=${PARENT_COMMIT_SHA}")
+            fi
+            
+            RESPONSE=$(curl -X POST "$CREATE_TASK_URL" \
+              -H "Authorization: Bearer $BACKEND_TOKEN" \
+              "${CURL_PARAMS[@]}" \
+              -sS -w "\nHTTP_CODE:%{http_code}" \
+              --connect-timeout 30 \
+              --max-time 60 \
+              2>&1) || {
+              echo "错误: 获取或创建任务请求失败" >&2
+              echo "响应: $RESPONSE" >&2
+              echo "" >&2
+              echo "提示: 打包必须生成任务 ID。请确保服务器提供了 /api/github/create_task 接口" >&2
+              exit 1
+            }
+          fi
+          
+          # 从响应中提取任务 ID（如果服务器返回了新的任务 ID）
+          TASK_ID="$PROVIDED_TASK_ID"
+          if [ -z "$TASK_ID" ]; then
+            # 尝试从响应中提取任务 ID
+            TASK_ID=$(echo "$RESPONSE" | grep -oE '"task_id"[[:space:]]*:[[:space:]]*[0-9]+' | grep -oE '[0-9]+' | head -n 1)
+            if [ -z "$TASK_ID" ]; then
+              TASK_ID=$(echo "$RESPONSE" | grep -oE 'task_id[[:space:]]*=[[:space:]]*[0-9]+' | grep -oE '[0-9]+' | head -n 1)
+            fi
+          fi
+          
+          HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_CODE:/d')
+          
+          echo ""
+          echo "HTTP 状态码: $HTTP_CODE"
+          echo "服务器响应: $BODY"
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            if [ -z "$TASK_ID" ]; then
+              echo "错误: 服务器返回成功，但未找到任务 ID" >&2
+              echo "响应内容: $BODY" >&2
+              exit 1
+            fi
+            echo "✓ 任务 ID 验证成功: $TASK_ID"
+            echo "task_id=$TASK_ID" >> "$GITHUB_OUTPUT"
+            echo "TASK_ID=$TASK_ID" >> "$GITHUB_ENV"
+          elif [ "$HTTP_CODE" = "404" ]; then
+            echo "错误: 任务不存在 (HTTP 404)" >&2
+            echo "请确保任务已在后台创建" >&2
+            exit 1
+          else
+            echo "错误: 验证任务失败 (HTTP $HTTP_CODE)" >&2
+            echo "响应: $BODY" >&2
+            exit 1
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 30
+
+      - name: Accept licenses and install SDK components
+        run: |
+          echo "=== 设置 Android SDK ==="
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo ""
+          
+          # 查找 sdkmanager
+          ANDROID_SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMANAGER_PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          
+          if [ ! -f "$SDKMANAGER_PATH" ]; then
+            SDKMANAGER_PATH=$(find "$ANDROID_SDK_ROOT" -name sdkmanager -type f 2>/dev/null | head -n 1)
+          fi
+          
+          if [ -z "$SDKMANAGER_PATH" ] || [ ! -f "$SDKMANAGER_PATH" ]; then
+            echo "错误: 未找到 sdkmanager" >&2
+            exit 1
+          fi
+          
+          echo "使用 sdkmanager: $SDKMANAGER_PATH"
+          echo ""
+          
+          # 接受许可证
+          echo "=== 接受 Android SDK 许可证 ==="
+          yes | "$SDKMANAGER_PATH" --licenses || true
+          echo ""
+          
+          # 安装 SDK 组件（包括 NDK，用于编译 native 库）
+          echo "=== 安装 SDK 组件 ==="
+          "$SDKMANAGER_PATH" "platforms;android-30" "platform-tools" "build-tools;30.0.3" "ndk;21.4.7075529" "cmake;3.10.2.4988404"
+          echo ""
+          echo "✓ SDK 设置完成"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build unsigned release APK
+        env:
+          GRADLE_OPTS: "-Xmx6144m -XX:MaxMetaspaceSize=2048m"
+          BACKEND_URL: ${{ secrets.SIGN_SERVER_URL }}
+          BACKEND_TOKEN: ${{ secrets.SIGN_SERVER_TOKEN }}
+          TASK_ID: ${{ steps.validate_task.outputs.task_id }}
+        run: |
+          echo "=== 开始构建 APK ==="
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "Gradle 内存设置: $GRADLE_OPTS"
+          echo "任务 ID: $TASK_ID"
+          echo "BACKEND_URL: ${BACKEND_URL:0:50}..."
+          echo ""
+          
+          # 设置日志发送相关变量
+          UPDATE_LOG_URL="${BACKEND_URL}/api/github/update_log"
+          
+          if [ -z "$TASK_ID" ]; then
+            echo "警告: TASK_ID 未设置，将不会发送实时日志"
+          fi
+          
+          if [ -z "$UPDATE_LOG_URL" ] || [ -z "$BACKEND_TOKEN" ]; then
+            echo "警告: UPDATE_LOG_URL 或 BACKEND_TOKEN 未设置，将不会发送实时日志"
+          fi
+          
+          # 使用命名管道批量发送日志（优化性能）
+          if [ -n "$TASK_ID" ] && [ -n "$UPDATE_LOG_URL" ] && [ -n "$BACKEND_TOKEN" ]; then
+            echo "✓ 实时日志发送已启用（批量模式）"
+            echo "  TASK_ID: $TASK_ID"
+            echo "  UPDATE_LOG_URL: $UPDATE_LOG_URL"
+            echo "  批量大小: 50行 或 5秒间隔"
+            echo ""
+            
+            # 创建命名管道
+            PIPE=$(mktemp -u)
+            mkfifo "$PIPE"
+            
+            # 后台进程：批量读取管道并发送日志（优化性能）
+            (
+              BATCH_SIZE=50  # 批量大小：每50行发送一次
+              BATCH_INTERVAL=5  # 时间间隔：每5秒发送一次
+              log_buffer=""
+              log_count=0
+              batch_count=0
+              buffer_line_count=0
+              last_send_time=$(date +%s)
+              
+              # 发送缓冲区的日志
+              flush_logs() {
+                if [ -n "$log_buffer" ] && [ "$buffer_line_count" -gt 0 ] && [ -n "$TASK_ID" ] && [ -n "$UPDATE_LOG_URL" ] && [ -n "$BACKEND_TOKEN" ]; then
+                  # 转义特殊字符（保护换行符）
+                  buffer_escaped=$(printf '%s' "$log_buffer")
+                  # 异步发送，不阻塞构建（不等待完成）
+                  (
+                    curl -X POST "$UPDATE_LOG_URL" \
+                      -H "Authorization: Bearer $BACKEND_TOKEN" \
+                      -F "task_id=$TASK_ID" \
+                      -F "log_content=$buffer_escaped" \
+                      --connect-timeout 5 \
+                      --max-time 10 \
+                      -sS >/dev/null 2>&1 || true
+                  ) &
+                  log_buffer=""
+                  buffer_line_count=0
+                  batch_count=$((batch_count + 1))
+                  last_send_time=$(date +%s)
+                fi
+              }
+              
+              # 设置陷阱：当管道关闭时，刷新剩余的日志
+              trap 'flush_logs; exit 0' EXIT
+              
+              # 读取管道并批量发送
+              while IFS= read -r line || [ -n "$line" ]; do
+                if [ -n "$line" ]; then
+                  # 添加到缓冲区
+                  if [ -z "$log_buffer" ]; then
+                    log_buffer="$line"
+                  else
+                    log_buffer="$log_buffer"$'\n'"$line"
+                  fi
+                  log_count=$((log_count + 1))
+                  buffer_line_count=$((buffer_line_count + 1))
+                  
+                  # 检查是否需要发送（批量大小或时间间隔）
+                  current_time=$(date +%s)
+                  time_since_last_send=$((current_time - last_send_time))
+                  
+                  if [ "$buffer_line_count" -ge "$BATCH_SIZE" ] || [ "$time_since_last_send" -ge "$BATCH_INTERVAL" ]; then
+                    flush_logs
+                  fi
+                  
+                  # 每处理 500 行输出一次统计（降低日志输出频率）
+                  if [ $((log_count % 500)) -eq 0 ]; then
+                    echo "[DEBUG] 已处理 $log_count 行日志，已发送 $batch_count 批次" >&2
+                  fi
+                fi
+              done < "$PIPE" || true
+              
+              # 发送剩余的日志
+              flush_logs
+              
+              echo "[INFO] 日志发送完成，共处理 $log_count 行，发送 $batch_count 批次" >&2
+            ) &
+            PIPE_READER_PID=$!
+            
+            # 构建并同时输出到文件、控制台和管道
+            ./gradlew :app:assembleRelease \
+              -Dorg.gradle.java.home=$JAVA_HOME \
+              --stacktrace \
+              --info 2>&1 | tee build.log "$PIPE" || {
+              BUILD_EXIT_CODE=$?
+              # 关闭管道
+              kill $PIPE_READER_PID 2>/dev/null || true
+              rm -f "$PIPE"
+              echo ""
+              echo "=== 构建失败 (退出码: $BUILD_EXIT_CODE) ==="
+              echo "显示构建日志最后 100 行:"
+              tail -n 100 build.log
+              exit $BUILD_EXIT_CODE
+            }
+            
+            # 关闭管道并等待后台进程完成
+            rm -f "$PIPE"
+            wait $PIPE_READER_PID 2>/dev/null || true
+            echo "[INFO] 构建完成，日志发送进程已结束"
+          else
+            echo "✗ 实时日志发送未启用（缺少必要配置）"
+            echo ""
+            # 如果没有配置日志发送，使用原来的方式
+            ./gradlew :app:assembleRelease \
+              -Dorg.gradle.java.home=$JAVA_HOME \
+              --stacktrace \
+              --info 2>&1 | tee build.log || {
+              BUILD_EXIT_CODE=$?
+              echo ""
+              echo "=== 构建失败 (退出码: $BUILD_EXIT_CODE) ==="
+              echo "显示构建日志最后 100 行:"
+              tail -n 100 build.log
+              exit $BUILD_EXIT_CODE
+            }
+          fi
+          
+          echo ""
+          echo "=== 构建成功 ==="
+          echo "查找生成的 APK 文件:"
+          find app/build/outputs -name "*.apk" -type f
+
+      - name: Collect unsigned APK
+        id: collect_apk
+        run: |
+          APK_PATH=$(find app/build/outputs/apk -name "*.apk" -type f 2>/dev/null | head -n 1)
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "错误: 未找到 APK 文件" >&2
+            echo "检查构建输出目录:" >&2
+            ls -la app/build/outputs/ 2>/dev/null || echo "app/build/outputs/ 目录不存在" >&2
+            exit 1
+          fi
+          
+          echo "找到 APK: $APK_PATH"
+          ls -lh "$APK_PATH"
+          echo "apk_path=$APK_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Upload unsigned APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-apk-${{ steps.validate_task.outputs.task_id }}
+          path: ${{ steps.collect_apk.outputs.apk_path }}
+          retention-days: 7
+
+      - name: Upload APK to backend for signing
+        if: success()
+        env:
+          BACKEND_URL: ${{ secrets.SIGN_SERVER_URL }}
+          BACKEND_TOKEN: ${{ secrets.SIGN_SERVER_TOKEN }}
+        run: |
+          echo "=== 上传 APK 到后端进行签名 ==="
+          
+          TASK_ID="${{ steps.validate_task.outputs.task_id }}"
+          APK_PATH="${{ steps.collect_apk.outputs.apk_path }}"
+          NOTIFY_SIGN_URL="${BACKEND_URL}/api/github/notify_sign"
+          WORKFLOW_RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          
+          echo "任务 ID: $TASK_ID"
+          echo "APK 路径: $APK_PATH"
+          echo "APK 大小: $(ls -lh "$APK_PATH" | awk '{print $5}')"
+          echo "通知 URL: $NOTIFY_SIGN_URL"
+          echo ""
+          
+          echo "开始上传 APK..."
+          echo "上传参数:"
+          echo "  - 文件: $APK_PATH"
+          echo "  - 大小: $(ls -lh "$APK_PATH" | awk '{print $5}')"
+          echo "  - URL: $NOTIFY_SIGN_URL"
+          echo ""
+          
+          # 先测试网络连接
+          echo "=== 测试网络连接 ==="
+          HOST=$(echo "$BACKEND_URL" | sed -E 's|^https?://([^/:]+)(:.*)?/.*$|\1|')
+          PORT=$(echo "$BACKEND_URL" | sed -E 's|^https?://[^:]+:([0-9]+).*$|\1|')
+          if [ -z "$PORT" ]; then
+            if [[ "$BACKEND_URL" =~ ^https:// ]]; then
+              PORT=443
+            else
+              PORT=80
+            fi
+          fi
+          echo "目标服务器: $HOST:$PORT"
+          echo "GitHub Actions Runner IP: $(curl -s ifconfig.me 2>/dev/null || echo '无法获取')"
+          
+          # 测试 TCP 连接
+          echo "测试 TCP 连接到 $HOST:$PORT ..."
+          if timeout 15 bash -c "echo >/dev/tcp/$HOST/$PORT" 2>/dev/null; then
+            echo "✓ TCP 连接测试成功"
+          else
+            echo "✗ TCP 连接测试失败"
+            echo "  这可能是网络问题，但继续尝试上传..."
+          fi
+          echo ""
+          
+          # 显示上传进度（每 10 秒显示一次）
+          (
+            while true; do
+              sleep 10
+              echo "[上传中... $(date '+%H:%M:%S')]"
+            done
+          ) &
+          PROGRESS_PID=$!
+          
+          # 执行上传，使用更长的超时时间
+          echo "开始上传（连接超时: 120秒, 总超时: 1800秒/30分钟）..."
+          RESPONSE=$(curl -X POST "$NOTIFY_SIGN_URL" \
+            -H "Authorization: Bearer $BACKEND_TOKEN" \
+            -F "task_id=$TASK_ID" \
+            -F "apk=@${APK_PATH}" \
+            -F "workflow_run_url=$WORKFLOW_RUN_URL" \
+            -F "build_status=success" \
+            -w "\nHTTP_CODE:%{http_code}\nTIME_TOTAL:%{time_total}\nSPEED_UPLOAD:%{speed_upload}" \
+            --connect-timeout 120 \
+            --max-time 1800 \
+            --retry 2 \
+            --retry-delay 10 \
+            -v 2>&1) || {
+            # 停止进度显示
+            kill $PROGRESS_PID 2>/dev/null || true
+            echo ""
+            echo "警告: 上传 APK 请求失败" >&2
+            echo "响应: $RESPONSE" >&2
+            exit 0  # 上传失败不影响工作流
+          }
+          
+          # 停止进度显示
+          kill $PROGRESS_PID 2>/dev/null || true
+          
+          HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_CODE:/d')
+          
+          echo ""
+          echo "HTTP 状态码: $HTTP_CODE"
+          echo "服务器响应: $BODY"
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✓ APK 已上传，签名流程已启动"
+          else
+            echo "✗ 上传 APK 失败 (HTTP $HTTP_CODE)"
+            echo "响应: $BODY"
+            exit 0  # 上传失败不影响工作流
+          fi
+
+      - name: Notify backend about build failure
+        if: failure()
+        env:
+          BACKEND_URL: ${{ secrets.SIGN_SERVER_URL }}
+          BACKEND_TOKEN: ${{ secrets.SIGN_SERVER_TOKEN }}
+        run: |
+          echo "=== 通知后端构建失败 ==="
+          
+          TASK_ID="${{ steps.validate_task.outputs.task_id }}"
+          NOTIFY_FAILED_URL="${BACKEND_URL}/api/github/notify_build_failed"
+          WORKFLOW_RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          
+          # 提取错误信息
+          ERROR_MSG="GitHub Actions 构建失败"
+          
+          if [ -f "build.log" ]; then
+            # 提取关键错误信息
+            WHAT_WENT_WRONG=$(grep -A 10 "What went wrong" build.log 2>/dev/null | head -n 5 | tr '\n' ' ' | sed 's/[[:space:]]*/ /g' || echo "")
+            EXECUTION_FAILED=$(grep -A 5 "Execution failed" build.log 2>/dev/null | head -n 3 | tr '\n' ' ' | sed 's/[[:space:]]*/ /g' || echo "")
+            LAST_ERRORS=$(tail -n 50 build.log 2>/dev/null | grep -iE "(error|failed|exception|BUILD FAILED)" | tail -n 3 | tr '\n' ' | ' | sed 's/[[:space:]]*/ /g' || echo "")
+            
+            if [ -n "$WHAT_WENT_WRONG" ]; then
+              ERROR_MSG="${ERROR_MSG} | What went wrong: ${WHAT_WENT_WRONG:0:300}"
+            fi
+            if [ -n "$EXECUTION_FAILED" ]; then
+              ERROR_MSG="${ERROR_MSG} | Execution failed: ${EXECUTION_FAILED:0:300}"
+            fi
+            if [ -n "$LAST_ERRORS" ]; then
+              ERROR_MSG="${ERROR_MSG} | Last errors: ${LAST_ERRORS:0:500}"
+            fi
+            
+            # 如果没有提取到具体错误，使用最后30行
+            if [ "$ERROR_MSG" = "GitHub Actions 构建失败" ]; then
+              LAST_LINES=$(tail -n 30 build.log 2>/dev/null | tr '\n' ' | ' | sed 's/[[:space:]]*/ /g' || echo "")
+              if [ -n "$LAST_LINES" ]; then
+                ERROR_MSG="${ERROR_MSG} | Build log: ${LAST_LINES:0:800}"
+              fi
+            fi
+          fi
+          
+          # 限制错误消息长度
+          ERROR_MSG="${ERROR_MSG:0:2000}"
+          
+          echo "任务 ID: $TASK_ID"
+          echo "错误信息长度: ${#ERROR_MSG} 字符"
+          echo ""
+          echo "发送失败通知..."
+          
+          RESPONSE=$(curl -X POST "$NOTIFY_FAILED_URL" \
+            -H "Authorization: Bearer $BACKEND_TOKEN" \
+            -F "task_id=$TASK_ID" \
+            -F "error_message=${ERROR_MSG}" \
+            -F "workflow_run_url=$WORKFLOW_RUN_URL" \
+            -F "build_status=failed" \
+            -sS -w "\nHTTP_CODE:%{http_code}" \
+            --connect-timeout 30 \
+            --max-time 60 \
+            2>&1) || {
+            echo "警告: 发送失败通知请求失败" >&2
+            echo "响应: $RESPONSE" >&2
+            exit 0  # 通知失败不影响工作流
+          }
+          
+          HTTP_CODE=$(echo "$RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_CODE:/d')
+          
+          echo ""
+          echo "HTTP 状态码: $HTTP_CODE"
+          echo "服务器响应: $BODY"
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✓ 构建失败通知已发送"
+          else
+            echo "✗ 发送失败通知失败 (HTTP $HTTP_CODE)"
+            echo "响应: $BODY"
+          fi
