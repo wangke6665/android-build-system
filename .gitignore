@@ -135,6 +135,7 @@ xor_encrypt.html
 !app/libs/
 !app/proguard-*.txt
 !app/lint.xml
+!app/src/main/cpp/CMakeLists.txt
 !build.gradle
 !settings.gradle
 !gradle.properties
